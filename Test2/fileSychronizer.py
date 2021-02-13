@@ -204,7 +204,7 @@ class FileSynchronizer(threading.Thread):
         # Step 2. now receive a directory response message from tracker
         directory_response_message = json.loads(
             self.client.recv(self.BUFFER_SIZE))
-        print('received from tracker:', directory_response_message)
+        # print('received from tracker:', directory_response_message)
 
         # Step 3. parse the directory response message. If it contains new or
         # more up-to-date files, request the files from the respective peers.
@@ -232,6 +232,9 @@ class FileSynchronizer(threading.Thread):
                 file_data = get_file_from_peer(
                     remote_file, directory_response_message[remote_file], self.BUFFER_SIZE)
                 create_file(remote_file, file_data.decode("utf-8"))
+
+        #      d. finally, write the file content to disk with the file name, use os.utime
+        #         to set the mtime
 
         # Step 4. construct and send the KeepAlive message
         self.msg = bytes(json.dumps({"port": self.port}), 'utf-8')
